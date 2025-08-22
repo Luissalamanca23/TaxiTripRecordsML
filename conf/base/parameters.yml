@@ -1,0 +1,31 @@
+# Model parameters for NYC Taxi ML project
+
+# Random Forest parameters
+random_forest:
+  n_estimators: 100
+  max_depth: 15
+  min_samples_split: 5
+  min_samples_leaf: 2
+
+# XGBoost parameters
+xgboost:
+  n_estimators: 100
+  max_depth: 6
+  learning_rate: 0.1
+  subsample: 0.8
+  colsample_bytree: 0.8
+
+# LightGBM parameters
+lightgbm:
+  n_estimators: 100
+  max_depth: 6
+  learning_rate: 0.1
+  num_leaves: 31
+  feature_fraction: 0.8
+
+# Model names for evaluation
+model_names:
+  linear_regression: "Linear Regression"
+  random_forest: "Random Forest"
+  xgboost: "XGBoost"
+  lightgbm: "LightGBM"

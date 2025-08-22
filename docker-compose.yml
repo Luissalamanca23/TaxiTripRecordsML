@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  # Servicio principal - Pipeline ML
+  taxi-ml:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taxi_ml_pipeline
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - models_volume:/app/data/06_models
+    environment:
+      - KEDRO_ENV=local
+      - PYTHONPATH=/app/src
+    networks:
+      - taxi_network
+    restart: unless-stopped
+    command: ["kedro", "run"]
+
+  # Kedro Viz - Visualización del pipeline
+  kedro-viz:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taxi_ml_viz
+    ports:
+      - "4141:4141"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./conf:/app/conf
+      - ./src:/app/src
+    environment:
+      - KEDRO_ENV=local
+      - PYTHONPATH=/app/src
+    networks:
+      - taxi_network
+    restart: unless-stopped
+    command: ["kedro", "viz", "--host=0.0.0.0", "--port=4141", "--no-browser"]
+    depends_on:
+      - taxi-ml
+
+  # Jupyter Lab - Desarrollo y análisis
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taxi_ml_jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./:/app
+      - jupyter_data:/home/airlines_user/.jupyter
+    environment:
+      - KEDRO_ENV=local
+      - PYTHONPATH=/app/src
+      - JUPYTER_ENABLE_LAB=yes
+    networks:
+      - taxi_network
+    restart: unless-stopped
+    command: ["bash", "-c", "pip install jupyter kedro[jupyter] && jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''"]
+
+  # Servicio para procesamiento de datos únicamente
+  data-processing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taxi_ml_data_processing
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - KEDRO_ENV=local
+      - PYTHONPATH=/app/src
+    networks:
+      - taxi_network
+    command: ["kedro", "run", "--pipeline", "data_processing"]
+
+  # Servicio para ML únicamente
+  ml-training:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taxi_ml_training
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - models_volume:/app/data/06_models
+    environment:
+      - KEDRO_ENV=local
+      - PYTHONPATH=/app/src
+    networks:
+      - taxi_network
+    command: ["kedro", "run", "--pipeline", "data_science"]
+    depends_on:
+      - data-processing
+
+volumes:
+  models_volume:
+    driver: local
+  jupyter_data:
+    driver: local
+  dev_cache:
+    driver: local
+
+networks:
+  taxi_network:
+    driver: bridge
