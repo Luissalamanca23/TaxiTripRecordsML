@@ -4,6 +4,11 @@
 
 Este proyecto de aprendizaje automático utiliza la metodología CRISP-DM para analizar y predecir patrones en los registros de viajes de taxi amarillo de Nueva York. El proyecto procesa datos históricos de la Comisión de Taxis y Limusinas de NYC (TLC) desde 2009 hasta 2023, aplicando técnicas avanzadas de ciencia de datos y machine learning para extraer insights valiosos y crear modelos predictivos.
 
+## Autores
+
+- Luis Salamanca
+- Brahian Gonzales
+
 ## Fuente de Datos
 
 Los datos provienen de los **Registros de Viajes TLC (Trip Record Data)** de la Ciudad de Nueva York. Los registros de taxis amarillos incluyen campos que capturan:
@@ -15,6 +20,8 @@ Los datos provienen de los **Registros de Viajes TLC (Trip Record Data)** de la 
 - Tipos de tarifa y formas de pago
 - Número de pasajeros reportado por el conductor
 - Recargos por congestión y aeropuerto
+
+> 📋 **Para información detallada sobre la obtención, estructura y análisis técnico de los datos**, consulte la [documentación específica de datos raw](data/01_raw/README.md).
 
 ### Características del Dataset
 
